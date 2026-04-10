@@ -5,7 +5,7 @@ import random
 def hasAttribute(obj: dict, attribute: str):
     """Check whether a given dict contains a specific attribute
 
-    parameters:
+    attributes:
         obj -- a dict object
         attribute -- the key which potentially occurs in the obj dict
 
@@ -22,7 +22,7 @@ class ValidationHelper:
     def validateAge(self, userid: str):
         """Validate the age of a given user
 
-        parameters:
+        attributes:
             userid -- string id of the user object
 
         returns:
@@ -47,7 +47,7 @@ class ValidationHelper2:
     def validateAge(self, userid: str):
         """Validate the age of a given user
 
-        parameters:
+        attributes:
             userid -- string id of the user object
 
         returns:
