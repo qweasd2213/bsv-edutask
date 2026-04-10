@@ -1,17 +1,20 @@
 import pytest
 from src.util.helpers import hasAttribute
 
-@pytest.mark.unit
-def test_hasAttributeTrue():
-    result = hasAttribute({'name': 'Jane'}, 'name')
+@pytest.fixture
+def obj():
+    return {'name': 'Jane'}
+
+def test_hasAttribute_true(obj):
+    result = hasAttribute(obj, 'name')
     assert result == True
 
-@pytest.mark.unit
-def test_hasAttributeFalse():
-    result = hasAttribute({'name': 'Jane'}, 'age')
+def test_hasAttribute_false(obj):
+    result = hasAttribute(obj, 'email')
     assert result == False
 
-# @pytest.mark.unit
-# def test_hasAttributeNone():
-#     result = hasAttribute(None, 'age')
-#     assert result == False
+def test_hasAttribute_None():
+    obj = None
+    result = hasAttribute(obj, 'name')
+    assert result == False
+
