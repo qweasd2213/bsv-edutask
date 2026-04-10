@@ -41,5 +41,5 @@ def test_get_user_by_email_many_users(sut, capsys):
     assert result == user1 # if multiple users are found under the same email, return the first (oracle)
     assert 'more than one user found' in cap.out
 
-    
+# ARVID implement test case 6 and 7 here
 
