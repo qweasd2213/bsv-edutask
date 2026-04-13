@@ -17,6 +17,8 @@ def test_get_user_by_email_invalid(sut, invalid_email):
     with pytest.raises(ValueError):
         controller.get_user_by_email(invalid_email)
 
+# IMPLEMENT VALID EMAIL o EMPTY EMAIL TESTS
+
 @pytest.mark.unit
 def test_get_user_by_email_one_user(sut):
     controller, dao = sut # assigned both return values a definition
@@ -47,7 +49,7 @@ def test_get_user_by_email_many_users(sut, capsys):
 # ARVID implement test case 6 and 7 here
 # UwU
 @pytest.mark.unit
-def test_get_user_by_emal_valid_email_no_users(sut): # funktionen returnar inte None så det ska faila
+def test_get_user_by_email_valid_email_no_users(sut): # funktionen returnar inte None så det ska faila
     controller, dao = sut
 
     dao.find.return_value = [] # 0 users
