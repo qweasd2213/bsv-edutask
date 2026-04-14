@@ -7,19 +7,24 @@ def sut():
     dao_mock = mock.MagicMock()
     return UserController(dao_mock), dao_mock
 
-@pytest.mark.unit
-@pytest.mark.parametrize('invalid_email', ['wronformat.com', '', 'noat',])
+# Test case 1 indirectly covered by other tests
 
-@pytest.mark.unit
+@pytest.mark.unit # Testr case 2 
+@pytest.mark.parametrize('invalid_email', ['wronformat.com', 'noat',])
 def test_get_user_by_email_invalid(sut, invalid_email):
     controller, _ = sut # as ive only used one fixture, to reach my desired return value i need to define the return value = sut to use it
     
     with pytest.raises(ValueError):
         controller.get_user_by_email(invalid_email)
 
-# IMPLEMENT VALID EMAIL o EMPTY EMAIL TESTS
+@pytest.mark.unit   # Test case 3
+def test_get_user_by_email_empty(sut):
+    controller, dao = sut
 
-@pytest.mark.unit
+    with pytest.raises(ValueError):
+        controller.get_user_by_email('')
+
+@pytest.mark.unit # Test case 4
 def test_get_user_by_email_one_user(sut):
     controller, dao = sut # assigned both return values a definition
 
@@ -31,7 +36,7 @@ def test_get_user_by_email_one_user(sut):
     assert result == user # if result find the desired user
     dao.find.assert_called_once_with({'email': "test@email.com"}) # asserts that find is called only once
 
-@pytest.mark.unit
+@pytest.mark.unit # Test case 5
 def test_get_user_by_email_many_users(sut, capsys):
     controller, dao = sut
 
@@ -46,9 +51,7 @@ def test_get_user_by_email_many_users(sut, capsys):
     assert result == user1 # if multiple users are found under the same email, return the first (oracle)
     assert 'more than one user found' in cap.out
 
-# ARVID implement test case 6 and 7 here
-# UwU
-@pytest.mark.unit
+@pytest.mark.unit # Test case 6
 def test_get_user_by_email_valid_email_no_users(sut): # funktionen returnar inte None så det ska faila
     controller, dao = sut
 
@@ -58,7 +61,7 @@ def test_get_user_by_email_valid_email_no_users(sut): # funktionen returnar inte
     assert result is None # Expected output is None when no user is assosiated to that email address
     dao.find.assert_called_once_with({'email': "test@email.com"}) # asserts that find is called only once
 
-@pytest.mark.unit
+@pytest.mark.unit # Test case 7
 def test_get_user_by_emal_valid_email_DAO_raise_error(sut):
     controller, dao = sut
 
@@ -68,7 +71,3 @@ def test_get_user_by_emal_valid_email_DAO_raise_error(sut):
         controller.get_user_by_email('test@email.com')
 
     dao.find.assert_called_once_with({'email': "test@email.com"}) # asserts that find is called only once
-
-
-
-# Markerade alla som unit så man kan köra bara dom mer klean output...
