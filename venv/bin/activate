@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV=/home/fef/tc/bsv-edutask/venv
+VIRTUAL_ENV=/home/qweasd2213wsl/se2/pa1417/courseRepo/bsv-edutask/venv
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
