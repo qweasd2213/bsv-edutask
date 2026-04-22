@@ -203,6 +203,29 @@ def test_create_task_duplicate_title():
     with pytest.raises(Exception):
         dao.create(task_data_2)
 
+@pytest.mark.integration
+def test_create_task_invalid_description_type():
+    dao = DAO("task")
+
+    task_data = {
+        "title": "title1",
+        "description": 123
+    }
+
+    with pytest.raises(Exception):
+        dao.create(task_data)
+
+@pytest.mark.integration
+def test_create_task_no_title():
+    dao = DAO("task")
+
+    task_data = {
+        "description": "description yay!"
+    }
+
+    with pytest.raises(Exception):
+        dao.create(task_data)
+
 #TODO
 @pytest.mark.integration
 def test_create_todo():
