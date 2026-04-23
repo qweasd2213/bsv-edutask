@@ -95,6 +95,18 @@ def test_create_no_firstname():
         dao.create(user_data)
 
 @pytest.mark.integration
+def test_create_no_lastname():
+    dao = DAO("user")
+
+    user_data = {
+        "firstName": "Arvid",
+        "email": "sten@gmail.com"
+    }
+
+    with pytest.raises(Exception):
+        dao.create(user_data)
+
+@pytest.mark.integration
 def test_create_wrong_name_type():
     dao = DAO("user")
 
@@ -102,6 +114,20 @@ def test_create_wrong_name_type():
         "firstName": 123,
         "lastName": "Stenkvarg",
         "email": "stenkvarg@gmail.com"
+    }
+
+    with pytest.raises(Exception):
+        dao.create(user_data)
+
+@pytest.mark.integration
+def test_create_wrong_tasks_type():
+    dao = DAO("user")
+
+    user_data = {
+        "firstName": "Felix",
+        "lastName": "Stenkvarg",
+        "email": "stenkvarg@gmail.com",
+        "tasks": 123
     }
 
     with pytest.raises(Exception):
@@ -209,11 +235,67 @@ def test_create_task_invalid_description_type():
         dao.create(task_data)
 
 @pytest.mark.integration
+def test_create_task_invalid_startdate_type():
+    dao = DAO("task")
+
+    task_data = {
+        "title": "title1",
+        "description": "very fun vid",
+        "startdate": 123
+    }
+
+    with pytest.raises(Exception):
+        dao.create(task_data)
+
+@pytest.mark.integration
+def test_create_task_invalid_requires_type():
+    dao = DAO("task")
+
+    task_data = {
+        "title": "title1",
+        "description": "very fun vid",
+        "startdate": datetime(2026, 4, 22),
+        "requires": 123
+    }
+
+    with pytest.raises(Exception):
+        dao.create(task_data)
+
+@pytest.mark.integration
+def test_create_task_invalid_video_type():
+    dao = DAO("task")
+
+    obj1 = ObjectId()
+
+
+    task_data = {
+        "title": "title1",
+        "description": "very fun vid",
+        "startdate": datetime(2026, 4, 22),
+        "requires": [obj1],
+        "video": 123
+    }
+
+    with pytest.raises(Exception):
+        dao.create(task_data)
+
+@pytest.mark.integration
 def test_create_task_no_title():
     dao = DAO("task")
 
     task_data = {
         "description": "description yay!"
+    }
+
+    with pytest.raises(Exception):
+        dao.create(task_data)
+
+@pytest.mark.integration
+def test_create_task_no_description():
+    dao = DAO("task")
+
+    task_data = {
+        "title": "title1"
     }
 
     with pytest.raises(Exception):
@@ -267,6 +349,18 @@ def test_create_todo_wrong_type():
         dao.create(todo_data)
 
 @pytest.mark.integration
+def test_create_todo_wrong_type_done():
+    dao = DAO("todo")
+
+    todo_data = {
+        "description": "Walk the dog",
+        "done": 123
+    }
+
+    with pytest.raises(Exception):
+        dao.create(todo_data)
+
+@pytest.mark.integration
 def test_create_todo_missing_required_field():
     dao = DAO("todo")
 
@@ -312,70 +406,38 @@ def test_create_video_missing_required_field():
     with pytest.raises(Exception):
         dao.create(video_data)
 
+#Validator independent tests
+#extra data test
+@pytest.mark.integration
+def test_create_user_extra_fields():
+    dao = DAO("user")
 
+    user_data = {
+        "firstName": "Winter",
+        "lastName": "Burger",
+        "email": "zee3d.contact@gmail.com",
+        "tasks": [ObjectId(), ObjectId(), ObjectId()],
+        "location": "Sweden",
+        "favorite_color": "red40"
+    }
+    
+    result = dao.create(user_data)
 
+    assert "_id" in result
+    assert result["firstName"] == "Winter"
+    assert result["lastName"] == "Burger"
+    assert result["email"] == "zee3d.contact@gmail.com"
+    assert len(result["tasks"]) == 3
+    assert result["location"] == "Sweden"
+    assert result["favorite_color"] == "red40"
 
+#no data test
+@pytest.mark.integration
+def test_create_user_missing_required_field():
+    dao = DAO("user")
 
+    no_data = {
+    }
 
-
-
-
-
-
-
-
-
-
-# According to documentation these edgecases might be to much:
-
-# @pytest.mark.integration
-# def test_create_extra_user_data_field(test_db):
-#     dao = DAO("user")
-
-#     user_data = {
-#         "firstName": "Arvid",
-#         "lastName": "Sten",
-#         "email": "arvid@gmail.com",
-#         "tasks": [ObjectId(), ObjectId(), ObjectId()],
-#         "new": "wierd"
-#     }
-
-#     result = dao.create(user_data)
-
-#     assert result["new"] == "wierd"
-
-# @pytest.mark.integration
-# def test_create_user_empty_strings(test_db):
-#     dao = DAO("user")
-
-#     user_data = {
-#         "firstName": "",
-#         "lastName": "",
-#         "email": ""
-#     }
-
-#     result = dao.create(user_data)
-
-#     assert result["firstName"] == ""
-#     assert result["lastName"] == ""
-#     assert result["email"] == ""
-
-# @pytest.mark.integration
-# def test_create_user_with_null(test_db):
-#     dao = DAO("user")
-
-#     user_data = {
-#         "firstName": None,
-#         "lastName": "Sten",
-#         "email": "sten@gmail.com"
-#     }
-
-#     result = dao.create(user_data)
-
-#     assert result
-
-    #
-    #
-    # TASK TESTS
-    #
-    #
+    with pytest.raises(Exception):
+        dao.create(no_data)
