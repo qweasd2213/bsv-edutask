@@ -2,42 +2,37 @@
 import pytest
 import pymongo
 from dotenv import dotenv_values
-import os
 import uuid
-
+from unittest.mock import patch
 from src.util.dao import DAO
-import json
-from bson import json_util
 from bson.objectid import ObjectId
 from datetime import datetime
 
+# ---FIXTURE---
 @pytest.fixture
 def test_db():
-    # fixture for test db
     LOCAL_MONGO_URL = dotenv_values('.env').get('MONGO_URL')
     db_name = f"test{uuid.uuid4().hex}"#så alla test får en egen db
 
-    test_mongo_url = f"{LOCAL_MONGO_URL.rstrip('/')}/{db_name}"
+    #switch to test db by patching
+    real_client = pymongo.MongoClient
+    def patch_client_with_testDB(*args, **kwargs):
+        client = real_client(*args, **kwargs)
+        client.edutask = client[db_name]#seting test db instead of edutask
+        return client
 
-    os.environ['MONGO_URL'] = test_mongo_url
-
-    yield #Wait for test to run
+    with patch('pymongo.MongoClient', side_effect=patch_client_with_testDB):
+        yield #wait for tests to run
 
     # drop test db
-    client = pymongo.MongoClient(test_mongo_url)
+    client = pymongo.MongoClient(LOCAL_MONGO_URL)
     client.drop_database(db_name)
 
-
-
-    #
-    #
-    # CREATE USER TESTS
-    #
-    #
-
+# ---TESTS---
+#user validator
 @pytest.mark.integration
-def test_create_valid_user_with_optional(test_db):
-    dao = DAO("user")# get the user.json validator
+def test_create_valid_user_with_optional():
+    dao = DAO("user")
 
     user_data = { #valid data
         "firstName": "Winter",
@@ -57,8 +52,8 @@ def test_create_valid_user_with_optional(test_db):
     assert len(result["tasks"]) == 3
 
 @pytest.mark.integration
-def test_create_valid_user_no_optional(test_db):
-    dao = DAO("user")# get the user.json validator
+def test_create_valid_user_no_optional():
+    dao = DAO("user")
 
     user_data = { #valid data
         "firstName": "Winter",
@@ -76,8 +71,8 @@ def test_create_valid_user_no_optional(test_db):
     assert result["email"] == "zee3d.contact@gmail.com"
 
 @pytest.mark.integration
-def test_create_no_email(test_db):
-    dao = DAO("user") # get user.json validator
+def test_create_no_email():
+    dao = DAO("user")
 
     user_data = {
         "firstName": "Arvid",
@@ -88,7 +83,7 @@ def test_create_no_email(test_db):
         dao.create(user_data)
 
 @pytest.mark.integration
-def test_create_no_firstname(test_db):
+def test_create_no_firstname():
     dao = DAO("user")
 
     user_data = {
@@ -100,7 +95,7 @@ def test_create_no_firstname(test_db):
         dao.create(user_data)
 
 @pytest.mark.integration
-def test_create_wrong_name_type(test_db):
+def test_create_wrong_name_type():
     dao = DAO("user")
 
     user_data = {
@@ -113,7 +108,7 @@ def test_create_wrong_name_type(test_db):
         dao.create(user_data)
 
 @pytest.mark.integration
-def test_create_duplicate_email(test_db):
+def test_create_duplicate_email():
     dao = DAO("user")
 
     user_data_1 = {
@@ -133,17 +128,15 @@ def test_create_duplicate_email(test_db):
     with pytest.raises(Exception):
         dao.create(user_data_2)
 
-
-
+#task validator
 @pytest.mark.integration
-def test_create_valid_task_with_optionals(test_db):
+def test_create_valid_task_with_optionals():
     dao = DAO("task")
 
     obj1 = ObjectId()
     obj2 = ObjectId()
     obj3 = ObjectId()
     obj4 = ObjectId()
-
 
     task_data = {
         "title": "watch video 1",
@@ -170,7 +163,7 @@ def test_create_valid_task_with_optionals(test_db):
     assert result["video"]["$oid"] == str(obj4)
 
 @pytest.mark.integration
-def test_create_valid_task_without_optionals(test_db):
+def test_create_valid_task_without_optionals():
     dao = DAO("task")
 
     task_data = {
@@ -226,7 +219,7 @@ def test_create_task_no_title():
     with pytest.raises(Exception):
         dao.create(task_data)
 
-#TODO
+#todo validator
 @pytest.mark.integration
 def test_create_todo():
     dao = DAO("todo")
@@ -284,7 +277,7 @@ def test_create_todo_missing_required_field():
     with pytest.raises(Exception):
         dao.create(todo_data)
 
-#VIDEO
+#video validator
 @pytest.mark.integration
 def test_create_video():
     dao = DAO("video")
