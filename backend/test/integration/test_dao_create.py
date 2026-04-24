@@ -30,6 +30,28 @@ def test_db():
 
 # ---TESTS---
 #user validator
+
+#1
+@pytest.mark.integration
+def test_create_valid_user_no_optional():
+    dao = DAO("user")
+
+    user_data = { #valid data
+        "firstName": "Winter",
+        "lastName": "Burger",
+        "email": "zee3d.contact@gmail.com"
+    }
+    
+    # call create method
+    result = dao.create(user_data)
+
+    # check _id exists and data is correct
+    assert "_id" in result
+    assert result["firstName"] == "Winter"
+    assert result["lastName"] == "Burger"
+    assert result["email"] == "zee3d.contact@gmail.com"
+
+#2
 @pytest.mark.integration
 def test_create_valid_user_with_optional():
     dao = DAO("user")
@@ -51,25 +73,7 @@ def test_create_valid_user_with_optional():
     assert result["email"] == "zee3d.contact@gmail.com"
     assert len(result["tasks"]) == 3
 
-@pytest.mark.integration
-def test_create_valid_user_no_optional():
-    dao = DAO("user")
-
-    user_data = { #valid data
-        "firstName": "Winter",
-        "lastName": "Burger",
-        "email": "zee3d.contact@gmail.com"
-    }
-    
-    # call create method
-    result = dao.create(user_data)
-
-    # check _id exists and data is correct
-    assert "_id" in result
-    assert result["firstName"] == "Winter"
-    assert result["lastName"] == "Burger"
-    assert result["email"] == "zee3d.contact@gmail.com"
-
+#3
 @pytest.mark.integration
 def test_create_no_email():
     dao = DAO("user")
@@ -82,6 +86,7 @@ def test_create_no_email():
     with pytest.raises(Exception):
         dao.create(user_data)
 
+#4
 @pytest.mark.integration
 def test_create_no_firstname():
     dao = DAO("user")
@@ -94,6 +99,7 @@ def test_create_no_firstname():
     with pytest.raises(Exception):
         dao.create(user_data)
 
+#5
 @pytest.mark.integration
 def test_create_no_lastname():
     dao = DAO("user")
@@ -106,6 +112,7 @@ def test_create_no_lastname():
     with pytest.raises(Exception):
         dao.create(user_data)
 
+#6
 @pytest.mark.integration
 def test_create_wrong_name_type():
     dao = DAO("user")
@@ -119,6 +126,7 @@ def test_create_wrong_name_type():
     with pytest.raises(Exception):
         dao.create(user_data)
 
+#7
 @pytest.mark.integration
 def test_create_wrong_tasks_type():
     dao = DAO("user")
@@ -133,6 +141,7 @@ def test_create_wrong_tasks_type():
     with pytest.raises(Exception):
         dao.create(user_data)
 
+#8
 @pytest.mark.integration
 def test_create_duplicate_email():
     dao = DAO("user")
@@ -155,6 +164,7 @@ def test_create_duplicate_email():
         dao.create(user_data_2)
 
 #task validator
+#1
 @pytest.mark.integration
 def test_create_valid_task_with_optionals():
     dao = DAO("task")
@@ -188,6 +198,7 @@ def test_create_valid_task_with_optionals():
     assert result["todos"][1]["$oid"] == str(obj3)
     assert result["video"]["$oid"] == str(obj4)
 
+#2
 @pytest.mark.integration
 def test_create_valid_task_without_optionals():
     dao = DAO("task")
@@ -203,6 +214,7 @@ def test_create_valid_task_without_optionals():
     assert result["title"] == "watch video 2"
     assert result["description"] == "video 2 contains school material"
 
+#3
 @pytest.mark.integration
 def test_create_task_duplicate_title():
     dao = DAO("task")
@@ -222,6 +234,7 @@ def test_create_task_duplicate_title():
     with pytest.raises(Exception):
         dao.create(task_data_2)
 
+#4
 @pytest.mark.integration
 def test_create_task_invalid_description_type():
     dao = DAO("task")
@@ -234,6 +247,7 @@ def test_create_task_invalid_description_type():
     with pytest.raises(Exception):
         dao.create(task_data)
 
+#5
 @pytest.mark.integration
 def test_create_task_invalid_startdate_type():
     dao = DAO("task")
@@ -247,6 +261,7 @@ def test_create_task_invalid_startdate_type():
     with pytest.raises(Exception):
         dao.create(task_data)
 
+#6
 @pytest.mark.integration
 def test_create_task_invalid_requires_type():
     dao = DAO("task")
@@ -261,6 +276,7 @@ def test_create_task_invalid_requires_type():
     with pytest.raises(Exception):
         dao.create(task_data)
 
+#7
 @pytest.mark.integration
 def test_create_task_invalid_video_type():
     dao = DAO("task")
@@ -279,6 +295,7 @@ def test_create_task_invalid_video_type():
     with pytest.raises(Exception):
         dao.create(task_data)
 
+#8
 @pytest.mark.integration
 def test_create_task_no_title():
     dao = DAO("task")
@@ -290,6 +307,7 @@ def test_create_task_no_title():
     with pytest.raises(Exception):
         dao.create(task_data)
 
+#9
 @pytest.mark.integration
 def test_create_task_no_description():
     dao = DAO("task")
@@ -302,8 +320,23 @@ def test_create_task_no_description():
         dao.create(task_data)
 
 #todo validator
+#1
 @pytest.mark.integration
 def test_create_todo():
+    dao = DAO("todo")
+
+    todo_data = {
+        "description": "Walk the dog",
+    }
+
+    result = dao.create(todo_data)
+
+    assert "_id" in result
+    assert result["description"] == "Walk the dog"
+
+#2
+@pytest.mark.integration
+def test_create_todo_with_optionals():
     dao = DAO("todo")
 
     todo_data = {
@@ -317,6 +350,7 @@ def test_create_todo():
     assert result["description"] == "Walk the dog"
     assert result["done"] == True
 
+#3
 @pytest.mark.integration
 def test_create_todo_duplicate_description():
     dao = DAO("todo")
@@ -336,6 +370,7 @@ def test_create_todo_duplicate_description():
     with pytest.raises(Exception):
         dao.create(todo_data_duplicate)
 
+#4
 @pytest.mark.integration
 def test_create_todo_wrong_type():
     dao = DAO("todo")
@@ -348,6 +383,7 @@ def test_create_todo_wrong_type():
     with pytest.raises(Exception):
         dao.create(todo_data)
 
+#5
 @pytest.mark.integration
 def test_create_todo_wrong_type_done():
     dao = DAO("todo")
@@ -360,6 +396,7 @@ def test_create_todo_wrong_type_done():
     with pytest.raises(Exception):
         dao.create(todo_data)
 
+#6
 @pytest.mark.integration
 def test_create_todo_missing_required_field():
     dao = DAO("todo")
@@ -372,6 +409,7 @@ def test_create_todo_missing_required_field():
         dao.create(todo_data)
 
 #video validator
+#1
 @pytest.mark.integration
 def test_create_video():
     dao = DAO("video")
@@ -385,6 +423,7 @@ def test_create_video():
     assert "_id" in result
     assert result["url"] == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
+#2
 @pytest.mark.integration
 def test_create_video_wrong_type():
     dao = DAO("video")
@@ -396,6 +435,7 @@ def test_create_video_wrong_type():
     with pytest.raises(Exception):
         dao.create(video_data)
 
+#3
 @pytest.mark.integration
 def test_create_video_missing_required_field():
     dao = DAO("video")
@@ -408,6 +448,7 @@ def test_create_video_missing_required_field():
 
 #Validator independent tests
 #extra data test
+#1
 @pytest.mark.integration
 def test_create_user_extra_fields():
     dao = DAO("user")
@@ -432,6 +473,7 @@ def test_create_user_extra_fields():
     assert result["favorite_color"] == "red40"
 
 #no data test
+#2
 @pytest.mark.integration
 def test_create_user_missing_required_field():
     dao = DAO("user")
