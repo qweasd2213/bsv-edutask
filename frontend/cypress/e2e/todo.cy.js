@@ -102,16 +102,14 @@ describe('Todo tests', () => {
     })
 
     it  ('Test delete todo item', () => {
-
-        cy.get('.todo-item')
-            .first()
+        
+        cy.contains('.todo-item', 'Watch video')
             .find('.remover')
             .click()
 
-        cy.get('.todo-item')
-            .first()
-            .should('not.contain.text', 'watch video')
-})
+        cy.contains('.todo-item', 'Watch video')
+            .should('not.exist')
+    })
 
     after(function () {
         // clean up by deleting the user from the database
