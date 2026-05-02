@@ -52,6 +52,7 @@ describe('Todo tests', () => {
             .submit()
 
         cy.get('.title-overlay')
+            .first()
             .click()
     })
 
@@ -73,6 +74,44 @@ describe('Todo tests', () => {
         cy.get('.inline-form > [type="submit"]')
             .should('be.disabled')
     })
+
+    it('Test toggle strikethrough todo item name', () => {
+        
+        cy.get('.todo-item')
+            .first()
+            .find('.checker')
+            .click()
+        
+        cy.get('.todo-item')
+        .first()
+        .find('.editable')
+        .should('have.css', 'text-decoration-line', 'line-through')
+    })
+
+    it('Test untoggle strikethrough todo item name', () => {
+
+        cy.get('.todo-item')
+            .first()
+            .find('.checker')
+            .click()
+        
+        cy.get('.todo-item')
+        .first()
+        .find('.editable')
+        .should('not.have.css', 'text-decoration-line', 'line-through')
+    })
+
+    it  ('Test delete todo item', () => {
+
+        cy.get('.todo-item')
+            .first()
+            .find('.remover')
+            .click()
+
+        cy.get('.todo-item')
+            .first()
+            .should('not.contain.text', 'watch video')
+})
 
     after(function () {
         // clean up by deleting the user from the database
